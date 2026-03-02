@@ -1,0 +1,7 @@
+{
+  "name": "SistemaEstacionamiento",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
