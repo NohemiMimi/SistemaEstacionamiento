@@ -1,0 +1,77 @@
+/* Fondo de la pantalla (idéntico al Home) */
+.home-bg {
+  --background: #2CAD89;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Centrado del contenido */
+.home-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+/* Estructura de la tarjeta */
+.white-card {
+  background: white;
+  width: 85%;
+  max-width: 350px;
+  padding: 40px 30px;
+  border-radius: 30px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo del círculo con la letra E */
+.code-badge {
+  width: 90px;
+  height: 90px;
+  border: 4px solid #2CAD89;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 30px auto; /* Centrado y margen inferior */
+  font-size: 45px;
+  font-weight: bold;
+  color: #2CAD89;
+}
+
+/* Estilo del texto */
+.text-content {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 30px;
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin: 10px 0;
+    line-height: 1.4;
+  }
+}
+
+/* Botón de pago */
+.main-btn {
+  --background: #2CAD89;
+  --border-radius: 10px;
+  height: 50px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.qr-placeholder {
+  width: 150px;      
+  height: 150px;   
+  background: #f0f0f0;
+  border: 2px dashed #ccc; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 30px auto; 
+  border-radius: 15px;
+}

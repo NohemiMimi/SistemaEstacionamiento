@@ -1,0 +1,277 @@
+/* ========================= */
+/* Fondo general */
+/* ========================= */
+
+.custom-background{
+
+  --background: linear-gradient(
+    180deg,
+    #B9E85D 0%,
+    #6ED487 35%,
+    #5CB88B 70%,
+    #22A98A 100%
+  );
+
+}
+
+
+/* ========================= */
+/* KPI cards */
+/* ========================= */
+
+.kpi-card{
+
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  transition: transform 0.2s;
+
+}
+
+.kpi-card:hover{
+
+  transform: translateY(-5px);
+
+}
+
+.kpi-title{
+
+  font-size: 14px;
+  font-weight: 600;
+  opacity: .9;
+
+}
+
+.kpi-value{
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 10px;
+
+}
+
+.kpi-value ion-icon{
+
+  font-size: 28px;
+
+}
+
+
+/* ========================= */
+/* Paneles */
+/* ========================= */
+
+.panel-card{
+
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+
+}
+
+
+/* ========================= */
+/* Headers de panel */
+/* ========================= */
+
+ion-card-header{
+
+  background: linear-gradient(
+    90deg,
+    #5CB88B,
+    #22A98A
+  );
+
+  color: white;
+
+}
+
+
+/* ========================= */
+/* Video */
+/* ========================= */
+
+.video-placeholder{
+
+  height: 200px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: rgba(255,255,255,0.3);
+
+  backdrop-filter: blur(5px);
+
+}
+
+.video-placeholder ion-icon{
+
+  font-size: 50px;
+  color: #22A98A;
+
+}
+
+.video-placeholder p{
+
+  margin-top: 10px;
+  font-weight: 600;
+
+}
+
+
+/* ========================= */
+/* Lista de Vehículos */
+/* ========================= */
+
+ion-item{
+
+  border-radius: 10px;
+  margin-bottom: 5px;
+
+}
+
+
+/* ========================= */
+/* Botón agregar vehículo */
+/* ========================= */
+
+ion-button{
+
+  --border-radius: 12px;
+  margin: 10px;
+
+}
+
+
+/* ========================= */
+/* Notificaciones */
+/* ========================= */
+
+ion-note{
+
+  font-weight: bold;
+
+}
+
+
+/* ========================= */
+/* Scroll general */
+/* ========================= */
+
+ion-content{
+
+  --padding-bottom: 30px;
+
+}
+
+
+/* ========================= */
+/* Scroll de Vehículos */
+/* ========================= */
+
+.vehicle-scroll{
+
+  height: 420px;
+  overflow-y: auto;
+  padding: 10px;
+
+}
+
+
+/* ========================= */
+/* Tabla de Vehículos */
+/* ========================= */
+
+.vehicle-table{
+
+  width: 100%;
+  font-size: 15px;
+
+}
+
+
+/* Header tabla */
+
+.table-header{
+
+  font-weight: 700;
+
+  background: linear-gradient(
+    90deg,
+    #5CB88B,
+    #22A98A
+  );
+
+  color: white;
+
+  padding: 10px;
+
+  border-radius: 10px;
+
+}
+
+
+/* Filas */
+
+.table-row{
+
+  padding: 12px;
+
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+
+  align-items: center;
+
+}
+
+
+/* Hover filas */
+
+.table-row:hover{
+
+  background: rgba(255,255,255,0.4);
+
+  border-radius: 8px;
+
+}
+
+
+/* Efecto zebra tipo sistema */
+
+.table-row:nth-child(even){
+
+  background: rgba(255,255,255,0.2);
+
+}
+
+
+/* ========================= */
+/* Badges estado */
+/* ========================= */
+
+ion-badge{
+
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: 8px;
+
+}
+
+
+/* ========================= */
+/* Botones dentro de tabla */
+/* ========================= */
+
+.table-row ion-button{
+
+  --border-radius: 10px;
+
+  height: 32px;
+
+  font-size: 12px;
+
+}

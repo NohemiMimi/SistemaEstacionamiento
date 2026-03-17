@@ -5,21 +5,46 @@
     <div class="card">
       <h1>Inicio de sesión</h1>
       
-      <div class="form-container">
+      <form (ngSubmit)="login()" class="form-container">
+
         <ion-item lines="none" class="input-item">
-          <ion-input placeholder="Correo"></ion-input>
+          <ion-input
+            placeholder="Correo"
+            type="email"
+            name="correo"
+            [(ngModel)]="correo"
+            required>
+          </ion-input>
         </ion-item>
+
         <ion-item lines="none" class="input-item">
-          <ion-input type="password" placeholder="Contraseña"></ion-input>
+          <ion-input
+            type="password"
+            placeholder="Contraseña"
+            name="password"
+            [(ngModel)]="password"
+            required>
+          </ion-input>
         </ion-item>
-        
-        <ion-button expand="block" class="main-btn">INICIAR SESIÓN</ion-button>
+
+        <ion-button
+          expand="block"
+          class="main-btn"
+          type="submit"
+          [disabled]="!correo || !password">
+          INICIAR SESIÓN
+        </ion-button>
         
         <p class="register-text">
           ¿No tienes cuenta? 
-          <a [routerLink]="['/register']" style="color: #27ae60; font-weight: bold; cursor: pointer; text-decoration: none;">Registrarte</a>
+          <a
+            [routerLink]="['/register']"
+            style="color: #27ae60; font-weight: bold; cursor: pointer; text-decoration: none;">
+            Registrarte
+          </a>
         </p>
-      </div>
+
+      </form>
     </div>
   </div>
 </ion-content>

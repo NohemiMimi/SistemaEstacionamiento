@@ -1,0 +1,83 @@
+/* Fondo de la pantalla */
+.home-bg {
+  --background: #2CAD89;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+/* Centrado del contenido */
+.home-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+/* Estructura de la tarjeta */
+.white-card {
+  background: white;
+  width: 85%;
+  max-width: 350px;
+  padding: 40px 30px;
+  border-radius: 30px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* El círculo con la E */
+.code-badge {
+  width: 70px;
+  height: 70px;
+  border: 3px solid #2CAD89;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px auto;
+  font-size: 35px;
+  font-weight: bold;
+  color: #2CAD89;
+  line-height: 1;
+}
+
+/* Contenedor del QR */
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.qr-placeholder-box {
+  width: 160px;
+  height: 160px;
+  background: #f0f0f0;
+  border: 2px dashed #cccccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #888;
+}
+
+.scan-me {
+  background: #2CAD89;
+  color: white;
+  padding: 4px 15px;
+  margin-top: 8px;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+/* Texto de precio */
+.text-content {
+  p { margin: 0; color: #555; }
+  .price-tag {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 5px 0 0 0;
+    color: #000;
+  }
+}
