@@ -81,4 +81,17 @@ export class ApiService {
     return this.http.get<Alert[]>(this.api + '/alerts');
   }
 
+  //generar QR
+  crearQR(): Observable<any> {
+  return this.http.post(this.api + '/crear-qr', {});
+}
+//salida QR
+salidaQR(qrToken: string): Observable<any> {
+  return this.http.post(this.api + '/salida', { qrToken });
+}
+
+validarQR(qrToken: string) {
+  return this.http.post(this.api + '/validar-qr', { qrToken });
+}
+
 }

@@ -1,5 +1,6 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="dark">
+
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -7,248 +8,190 @@
     <ion-title>Panel de Administración - Sistema</ion-title>
 
     <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
 
-  <ion-button>
-    <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
-  </ion-button>
+      <ion-button>
+        <ion-icon slot="start" name="person-circle-outline"></ion-icon>
+        ADMIN
+      </ion-button>
 
-  <ion-button>
-    <ion-icon slot="start" name="person-circle-outline"></ion-icon>
-    ADMIN
-  </ion-button>
+      <ion-button (click)="logout()">
+        Cerrar sesión
+      </ion-button>
+    </ion-buttons>
 
-  <ion-button (click)="logout()">
-    Cerrar sesión
-  </ion-button>
-
-</ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 
 <ion-content class="ion-padding custom-background">
 
 <ion-grid>
 
-<!-- KPI -->
-
+<!-- KPI DINÁMICOS -->
 <ion-row>
+  <ion-col 
+    size="12" size-md="6" size-xl="3"
+    *ngFor="let kpi of kpis">
 
-<ion-col size="12" size-md="6" size-xl="3">
-<ion-card class="kpi-card color1">
+    <ion-card class="kpi-card" [ngClass]="kpi.color">
+      <ion-card-content>
 
-<ion-card-content>
+        <div class="kpi-title">{{kpi.title}}</div>
+        <div class="kpi-value">{{kpi.value}}</div>
 
-<div class="kpi-title">Estacionamientos Totales</div>
+        <ion-button
+          *ngIf="kpi.action"
+          size="small"
+          expand="block"
+          color="light"
+          (click)="kpi.action()">
 
-<div class="kpi-value">
-{{stats.totalSpaces}}
-</div>
+          {{kpi.button}}
 
-<ion-button
-size="small"
-expand="block"
-color="light"
-(click)="editTotalSpaces()">
+        </ion-button>
 
-Editar Lugares
+      </ion-card-content>
+    </ion-card>
 
-</ion-button>
-
-</ion-card-content>
-
-</ion-card>
-</ion-col>
-
-
-<ion-col size="12" size-md="6" size-xl="3">
-<ion-card class="kpi-card color2">
-<ion-card-content>
-<div class="kpi-title">Lugares Ocupados</div>
-<div class="kpi-value">{{stats.occupiedSpaces}}</div>
-</ion-card-content>
-</ion-card>
-</ion-col>
-
-
-<ion-col size="12" size-md="6" size-xl="3">
-<ion-card class="kpi-card color3">
-<ion-card-content>
-<div class="kpi-title">Lugares Disponibles</div>
-<div class="kpi-value">{{stats.availableSpaces}}</div>
-</ion-card-content>
-</ion-card>
-</ion-col>
-
-
-<ion-col size="12" size-md="6" size-xl="3">
-<ion-card class="kpi-card color4">
-<ion-card-content>
-<div class="kpi-title">Ingresos del Día</div>
-<div class="kpi-value">${{stats.dailyIncome}}</div>
-</ion-card-content>
-</ion-card>
-</ion-col>
-
-
-<ion-col size="12" size-md="6" size-xl="3">
-<ion-card class="kpi-card color5">
-<ion-card-content>
-<div class="kpi-title">Hora con más ingresos</div>
-<div class="kpi-value">{{peakHour}}</div>
-</ion-card-content>
-</ion-card>
-</ion-col>
-
+  </ion-col>
 </ion-row>
 
 
 <!-- PANEL -->
-
 <ion-row>
 
-<!-- CAMARA -->
-
+<!-- CÁMARA -->
 <ion-col size="12" size-lg="4">
-<ion-card class="panel-card">
+  <ion-card class="panel-card">
+    <ion-card-header>
+      <ion-card-title>Cámara en Vivo</ion-card-title>
+    </ion-card-header>
 
-<ion-card-header>
-<ion-card-title>Cámara en Vivo</ion-card-title>
-</ion-card-header>
+    <ion-card-content>
+      <div class="video-placeholder">
+        <p>Cámara</p>
+      </div>
+    </ion-card-content>
 
-<ion-card-content>
-
-<div class="video-placeholder">
-<p>Cámara</p>
-</div>
-
-</ion-card-content>
-
-</ion-card>
+  </ion-card>
 </ion-col>
 
 
-
-<!-- VEHICULOS -->
-
+<!-- QR -->
 <ion-col size="12" size-lg="4">
 
-<ion-card class="panel-card">
+  <ion-card class="panel-card">
 
-<ion-card-header>
-<ion-card-title>Vehículos Recientes</ion-card-title>
-</ion-card-header>
+    <ion-card-header>
+      <ion-card-title>Escáner QR</ion-card-title>
+    </ion-card-header>
 
-<ion-button expand="block" color="success" (click)="openAddVehicleModal()">
-REGISTRAR VEHÍCULO
+    <ion-card-content>
+
+      <ion-button expand="block" color="primary" (click)="scanQR()">
+  Escanear QR
 </ion-button>
 
-<div class="vehicle-scroll">
+      <div class="qr-result" *ngIf="scannedVehicle">
 
-<ion-grid class="vehicle-table">
+        <p><strong>ID:</strong> {{scannedVehicle.id}}</p>
+        <p><strong>Placa:</strong> {{scannedVehicle.plate}}</p>
+        <p><strong>Entrada:</strong> {{scannedVehicle.entryTime || '--'}}</p>
 
-<!-- HEADER -->
+        <p>
+          <strong>Estado:</strong>
+          <ion-badge [color]="scannedVehicle.status === 'Dentro' ? 'success' : 'medium'">
+            {{scannedVehicle.status}}
+          </ion-badge>
+        </p>
 
-<ion-row class="table-header">
+        <!-- BOTÓN DINÁMICO -->
+        <ion-button
+          expand="block"
+          [color]="scannedVehicle.status === 'Dentro' ? 'warning' : 'success'"
+          (click)="scannedVehicle.status === 'Dentro' ? abrirSalidaModal() : null">
 
-<ion-col size="3">Placa</ion-col>
-<ion-col size="2">Tipo</ion-col>
-<ion-col size="2">Entrada</ion-col>
-<ion-col size="2">Salida</ion-col>
-<ion-col size="1">Estado</ion-col>
-<ion-col size="2">Acción</ion-col>
+          {{ scannedVehicle.status === 'Dentro' ? 'Procesar Salida' : 'Confirmar Entrada' }}
 
-</ion-row>
+        </ion-button>
 
-<!-- FILAS -->
+      </div>
 
-<ion-row class="table-row" *ngFor="let vehicle of visibleVehicles">
+    </ion-card-content>
 
-<ion-col size="3">
-{{vehicle.plate}}
-</ion-col>
-
-<ion-col size="2">
-{{vehicle.type}}
-</ion-col>
-
-<ion-col size="2">
-{{vehicle.entryTime | date:'HH:mm'}}
-</ion-col>
-
-<ion-col size="2">
-{{vehicle.exitTime || '-'}}
-</ion-col>
-
-<ion-col size="1">
-
-<ion-badge
-[color]="vehicle.status === 'Dentro' ? 'success' : 'danger'">
-
-{{vehicle.status}}
-
-</ion-badge>
-
-</ion-col>
-
-<ion-col size="2">
-
-<ion-button
-size="small"
-color="warning"
-*ngIf="vehicle.status === 'Dentro'"
-(click)="openChargeModal(vehicle)">
-
-Cobrar
-
-</ion-button>
-
-</ion-col>
-
-</ion-row>
-
-</ion-grid>
-
-<ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
-
-<ion-infinite-scroll-content
-loadingSpinner="bubbles"
-loadingText="Cargando más vehículos...">
-
-</ion-infinite-scroll-content>
-
-</ion-infinite-scroll>
-
-</div>
-
-</ion-card>
+  </ion-card>
 
 </ion-col>
 
 
-
-<!-- ALERTAS -->
-
+<!-- VEHÍCULOS -->
 <ion-col size="12" size-lg="4">
 
-<ion-card class="panel-card">
+  <ion-card class="panel-card">
 
-<ion-card-header>
-<ion-card-title>Alertas y Notificaciones</ion-card-title>
-</ion-card-header>
+    <ion-card-header>
+      <ion-card-title>Vehículos Recientes</ion-card-title>
+    </ion-card-header>
 
-<ion-list>
+    <ion-button expand="block" color="success" (click)="openAddVehicleModal()">
+      REGISTRAR VEHÍCULO
+    </ion-button>
 
-<ion-item *ngFor="let alert of alerts">
+    <div class="vehicle-scroll">
 
-<ion-label>
-{{alert.message}}
-</ion-label>
+      <ion-grid class="vehicle-table">
 
-</ion-item>
+        <!-- HEADER -->
+        <ion-row class="table-header">
+          <ion-col size="3">Placa</ion-col>
+          <ion-col size="2">Tipo</ion-col>
+          <ion-col size="2">Entrada</ion-col>
+          <ion-col size="2">Salida</ion-col>
+          <ion-col size="1">Estado</ion-col>
+          <ion-col size="2">Acción</ion-col>
+        </ion-row>
 
-</ion-list>
+        <!-- FILAS -->
+        <ion-row class="table-row" *ngFor="let vehicle of visibleVehicles">
 
-</ion-card>
+          <ion-col size="3">{{vehicle.plate}}</ion-col>
+          <ion-col size="2">{{vehicle.type}}</ion-col>
+          <ion-col size="2">{{vehicle.entryTime | date:'HH:mm'}}</ion-col>
+          <ion-col size="2">{{vehicle.exitTime || '-'}}</ion-col>
+
+          <ion-col size="1">
+            <ion-badge [color]="vehicle.status === 'Dentro' ? 'success' : 'danger'">
+              {{vehicle.status}}
+            </ion-badge>
+          </ion-col>
+
+          <ion-col size="2">
+            <ion-button
+              size="small"
+              color="warning"
+              *ngIf="vehicle.status === 'Dentro'"
+              (click)="openChargeModal(vehicle)">
+              Cobrar
+            </ion-button>
+          </ion-col>
+
+        </ion-row>
+
+      </ion-grid>
+
+      <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+        <ion-infinite-scroll-content
+          loadingSpinner="bubbles"
+          loadingText="Cargando...">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+
+    </div>
+
+  </ion-card>
 
 </ion-col>
 
@@ -257,3 +200,45 @@ loadingText="Cargando más vehículos...">
 </ion-grid>
 
 </ion-content>
+
+
+<!-- MODAL -->
+<ion-modal [isOpen]="showExitModal" (didDismiss)="showExitModal = false">
+
+  <ng-template>
+
+    <ion-header>
+      <ion-toolbar color="dark">
+        <ion-title>Salida del Vehículo</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+
+      <p><strong>Placa:</strong> {{scannedVehicle?.plate}}</p>
+      <p><strong>Entrada:</strong> {{scannedVehicle?.entryTime}}</p>
+      <p><strong>Salida:</strong> {{exitTime}}</p>
+      <p><strong>Tiempo:</strong> {{totalTime}}</p>
+      <p><strong>Total:</strong> ${{totalAmount}}</p>
+
+      <ion-item>
+        <ion-label>Método de pago</ion-label>
+        <ion-select [(ngModel)]="paymentMethod">
+          <ion-select-option value="efectivo">Efectivo</ion-select-option>
+          <ion-select-option value="tarjeta">Tarjeta</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-button expand="block" color="success">
+        Confirmar Pago
+      </ion-button>
+
+      <ion-button expand="block" color="medium" (click)="showExitModal = false">
+        Cancelar
+      </ion-button>
+
+    </ion-content>
+
+  </ng-template>
+
+</ion-modal>

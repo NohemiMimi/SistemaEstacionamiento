@@ -5,13 +5,19 @@
       <div class="code-badge">E</div>
 
       <div class="qr-container">
-        <div class="qr-placeholder-box">QR AQUÍ</div>
+        <img [src]="qrImage" *ngIf="qrImage" />
         <div class="scan-me">SCAN ME</div>
       </div>
 
       <div class="text-content">
         <p>Total a pagar</p>
-        <h2 class="price-tag">$56</h2>
+        <h2 class="price-tag">
+  ${{ precio }}
+</h2>
+
+<p *ngIf="tiempo">
+  Tiempo: {{ tiempo.toFixed(2) }} minutos
+</p>
       </div>
       
     </div>

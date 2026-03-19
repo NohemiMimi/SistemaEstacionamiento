@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
+import { ApiService } from '../services/estacionamiento';
+import QRCode from 'qrcode';
 
 @Component({
   selector: 'app-pago-final',
@@ -10,6 +12,67 @@ import { IonicModule } from '@ionic/angular';
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule]
 })
-export class PagoFinalPage {
-  constructor() {}
+export class PagoFinalPage implements OnInit {
+
+  qrToken: string = '';
+  qrImage: string = '';
+  precio: number = 0;
+  tiempo: number = 0;
+  cargando: boolean = false;
+
+  constructor(
+    private api: ApiService,
+    private navCtrl: NavController
+  ) {}
+
+  ngOnInit() {
+    // 🔥 obtener token guardado
+    this.qrToken = localStorage.getItem('qrToken') || '';
+
+    if (this.qrToken) {
+      this.generarQR();   // 🔳 generar QR otra vez
+      this.calcularPago(); // 💰 calcular pago
+    } else {
+      console.warn('No hay QR token');
+    }
+  }
+
+  // 🔳 generar imagen del QR
+  generarQR() {
+    QRCode.toDataURL(this.qrToken)
+      .then((url: string) => {
+        this.qrImage = url;
+      })
+      .catch((err: any) => {
+        console.error('Error generando QR:', err);
+      });
+  }
+
+  // 💰 calcular pago desde backend
+  calcularPago() {
+    this.cargando = true;
+
+    this.api.salidaQR(this.qrToken).subscribe({
+      next: (res: any) => {
+        this.cargando = false;
+
+        if (res.success) {
+          this.precio = res.precio;
+          this.tiempo = res.tiempo;
+          
+        } else {
+          console.error('No se pudo calcular el pago');
+        }
+      },
+      error: (err) => {
+        this.cargando = false;
+        console.error('Error al calcular pago:', err);
+      }
+    });
+  }
+
+  // 🔙 regresar
+  regresar() {
+    this.navCtrl.back();
+  }
 }

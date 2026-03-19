@@ -9,8 +9,8 @@
       </div>
 
       <div class="qr-placeholder">
-        <p>[Espacio para QR]</p>
-      </div>
+  <img [src]="qrImage" *ngIf="qrImage" />
+</div>
 
       <ion-button expand="block" class="main-btn" (click)="irAPagoFinal()">
         PAGAR

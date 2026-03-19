@@ -4,13 +4,15 @@ import { IonicModule, AlertController } from '@ionic/angular';
 import { HttpClientModule } from '@angular/common/http';
 import { ApiService, DashboardStats, Vehicle, Alert } from '../services/estacionamiento';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
 
 @Component({
   selector: 'app-home',
   templateUrl: './admin.page.html',
   styleUrls: ['./admin.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, HttpClientModule]
+  imports: [IonicModule, CommonModule, HttpClientModule, FormsModule]
 })
 export class AdminPage implements OnInit {
 
@@ -28,6 +30,14 @@ export class AdminPage implements OnInit {
   itemsPerLoad = 5;
   peakHour = '--:--';
 
+  scannedVehicle: any = null;
+
+  showExitModal = false;
+  exitTime = '12:30 PM';
+  totalTime = '2 hrs 30 min';
+  totalAmount = 50;
+  paymentMethod = '';
+
   constructor(
     private alertCtrl: AlertController,
     private parkingService: ApiService,
@@ -38,52 +48,47 @@ export class AdminPage implements OnInit {
     this.loadRealData();
   }
 
-  // Extrae los datos de la base de datos
+  get kpis() {
+    return [
+      {
+        title: 'Estacionamientos Totales',
+        value: this.stats.totalSpaces,
+        color: 'color1',
+        button: 'Editar Lugares',
+        action: () => this.editTotalSpaces()
+      },
+      { title: 'Lugares Ocupados', value: this.stats.occupiedSpaces, color: 'color2' },
+      { title: 'Lugares Disponibles', value: this.stats.availableSpaces, color: 'color3' },
+      { title: 'Ingresos del Día', value: `$${this.stats.dailyIncome}`, color: 'color4' },
+      { title: 'Hora con más ingresos', value: this.peakHour, color: 'color5' }
+    ];
+  }
+
   loadRealData() {
-    this.parkingService.getStats().subscribe({
-      next: (data) => {
-        if (data) this.stats = data;
-      },
-      error: (err) => console.error('Error al cargar estadísticas', err)
-    });
-
-    this.parkingService.getAlerts().subscribe({
-      next: (data) => this.alerts = data,
-      error: (err) => console.error('Error al cargar alertas', err)
-    });
-
-    this.parkingService.getVehicles().subscribe({
-      next: (data) => {
-        this.vehicles = data;
-        this.visibleVehicles = this.vehicles.slice(0, this.itemsPerLoad);
-      },
-      error: (err) => console.error('Error al cargar vehículos', err)
+    this.parkingService.getStats().subscribe(d => d && (this.stats = d));
+    this.parkingService.getAlerts().subscribe(d => this.alerts = d);
+    this.parkingService.getVehicles().subscribe(d => {
+      this.vehicles = d;
+      this.visibleVehicles = d.slice(0, this.itemsPerLoad);
     });
   }
 
-  // Scroll infinito
   onIonInfinite(ev: any) {
-    setTimeout(() => {
-      const next = this.vehicles.slice(
-        this.visibleVehicles.length,
-        this.visibleVehicles.length + this.itemsPerLoad
-      );
-      this.visibleVehicles = [...this.visibleVehicles, ...next];
-      ev.target.complete();
-
-      if (this.visibleVehicles.length >= this.vehicles.length) {
-        ev.target.disabled = true;
-      }
-    }, 600);
+    const next = this.vehicles.slice(
+      this.visibleVehicles.length,
+      this.visibleVehicles.length + this.itemsPerLoad
+    );
+    this.visibleVehicles = [...this.visibleVehicles, ...next];
+    ev.target.complete();
+    if (this.visibleVehicles.length >= this.vehicles.length) ev.target.disabled = true;
   }
 
-  // Registrar vehículo
   async openAddVehicleModal() {
     const modal = await this.alertCtrl.create({
       header: 'Registrar Vehículo',
       inputs: [
-        { name: 'plate', type: 'text', placeholder: 'Placa del vehículo' },
-        { name: 'type', type: 'text', placeholder: 'Tipo de vehículo' }
+        { name: 'plate', type: 'text', placeholder: 'Placa' },
+        { name: 'type', type: 'text', placeholder: 'Tipo' }
       ],
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
@@ -91,18 +96,7 @@ export class AdminPage implements OnInit {
           text: 'Registrar',
           handler: (data) => {
             if (!data.plate || !data.type) return;
-
-            const newVehicle = {
-              plate: data.plate,
-              type: data.type
-            };
-
-            this.parkingService.addVehicle(newVehicle).subscribe({
-              next: () => {
-                this.loadRealData(); // Recarga la BD para ver los lugares actualizados
-              },
-              error: (err) => console.error('Error al guardar vehículo', err)
-            });
+            this.parkingService.addVehicle(data).subscribe(() => this.loadRealData());
           }
         }
       ]
@@ -110,109 +104,128 @@ export class AdminPage implements OnInit {
     await modal.present();
   }
 
-  // Cobrar salida
   async openChargeModal(vehicle: Vehicle) {
     if (!vehicle.id) return;
 
     const now = new Date();
-    const entryTimeMs = new Date(vehicle.entryTime).getTime();
-    const diffMs = now.getTime() - entryTimeMs;
-    const diffHours = diffMs / (1000 * 60 * 60);
-    const hoursToCharge = Math.ceil(diffHours > 0 ? diffHours : 1);
-    const rate = 15;
-    const total = hoursToCharge * rate;
+    const hours = Math.ceil((now.getTime() - new Date(vehicle.entryTime).getTime()) / 3600000);
+    const total = hours * 15;
 
     const modal = await this.alertCtrl.create({
-      header: 'Cobrar Vehículo',
-      message: `Tiempo estacionado: ${hoursToCharge} hora(s)\nTarifa: $15 por hora\nTotal a pagar: $${total}`,
+      header: 'Cobro',
+      message: `Tiempo: ${hours}h\nTotal: $${total}`,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Cobrar',
           handler: () => {
-            // Formato datetime para MySQL
-            const exitTimeFormatted = now.toISOString().slice(0, 19).replace('T', ' ');
-
-            const exitData = {
-              exitTime: exitTimeFormatted,
+            const exitTime = now.toISOString().slice(0, 19).replace('T', ' ');
+            this.parkingService.chargeVehicle(vehicle.id!, {
+              exitTime,
               price: total,
               status: 'Salida'
-            };
-
-            this.parkingService.chargeVehicle(vehicle.id!, exitData).subscribe({
-              next: () => {
-                this.loadRealData(); // Recarga la BD para reflejar ingresos y lugares
-              },
-              error: (err) => console.error('Error al procesar cobro', err)
-            });
+            }).subscribe(() => this.loadRealData());
           }
         }
       ]
     });
+
     await modal.present();
   }
 
-  // Editar capacidad total y guardarlo en la Base de Datos
   async editTotalSpaces() {
     const modal = await this.alertCtrl.create({
-      header: 'Editar espacios del estacionamiento',
-      inputs: [
-        {
-          name: 'spaces',
-          type: 'number',
-          value: this.stats.totalSpaces,
-          placeholder: 'Total de lugares'
-        }
-      ],
+      header: 'Editar espacios',
+      inputs: [{ name: 'spaces', type: 'number', value: this.stats.totalSpaces }],
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Guardar',
-          handler: (data) => {
-            const newTotal = Number(data.spaces);
-
-            if (newTotal > 0) {
-              // Manda el nuevo número al backend
-              this.parkingService.updateTotalSpaces(newTotal).subscribe({
-                next: () => {
-                  // Vuelve a consultar la base de datos para refrescar la pantalla
-                  this.loadRealData();
-                },
-                error: (err) => console.error('Error al actualizar espacios', err)
-              });
-            }
-          }
+          handler: (d) => d.spaces > 0 &&
+            this.parkingService.updateTotalSpaces(d.spaces)
+              .subscribe(() => this.loadRealData())
         }
       ]
     });
     await modal.present();
   }
 
+  abrirSalidaModal() {
+    this.showExitModal = true;
+  }
+
   async logout() {
-
-  const alert = await this.alertCtrl.create({
-    header: 'Cerrar sesión',
-    message: '¿Seguro que deseas cerrar sesión?',
-    buttons: [
-      {
-        text: 'Cancelar',
-        role: 'cancel'
-      },
-      {
-        text: 'Cerrar sesión',
-        handler: () => {
-
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-
-          this.router.navigate(['/login']);
-
+    const alert = await this.alertCtrl.create({
+      header: 'Cerrar sesión',
+      message: '¿Seguro?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Salir',
+          handler: () => {
+            localStorage.clear();
+            this.router.navigate(['/login']);
+          }
         }
+      ]
+    });
+    await alert.present();
+  }
+
+  async scanQR() {
+  try {
+
+    const permission = await BarcodeScanner.requestPermissions();
+
+    if (permission.camera !== 'granted') {
+      alert('Sin permiso de cámara');
+      return;
+    }
+
+    const result = await BarcodeScanner.scan();
+
+    // 🔴 DETENER ESCÁNER (CLAVE)
+    await BarcodeScanner.stopScan();
+
+    if (result.barcodes.length === 0) {
+      alert('No se detectó QR');
+      return;
+    }
+
+    const qrToken = result.barcodes[0].rawValue;
+
+    if (!qrToken) {
+      alert('QR inválido');
+      return;
+    }
+
+    this.parkingService.validarQR(qrToken).subscribe((res: any) => {
+
+      if (res.success) {
+
+        const data = res.data;
+
+        this.scannedVehicle = {
+          id: data.id,
+          plate: data.placa,
+          entryTime: data.horaEntrada,
+          status: data.estado === 'dentro' ? 'Dentro' : 'Salida'
+        };
+
+      } else {
+        alert('QR no válido');
       }
-    ]
-  });
 
-  await alert.present();
+    });
+
+  } catch (e) {
+    console.error(e);
+
+    // 🔴 TAMBIÉN DETENER EN ERROR
+    await BarcodeScanner.stopScan();
+
+    alert('Error al escanear');
+  }
 }
-
+  
 }
