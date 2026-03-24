@@ -75,3 +75,15 @@
   margin: 0 auto 30px auto; 
   border-radius: 15px;
 }
+
+ion-content {
+  --background: #2cb08a; // Usa el código exacto de tu verde
+}
+
+// Quitamos cualquier línea sobrante del header
+ion-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}

@@ -29,7 +29,7 @@ export interface Alert {
 export class ApiService {
 
   // Cambia esta URL si tu backend usa otro puerto
-  api = 'http://localhost:5000';
+  api = 'https://web-production-ea749.up.railway.app';
 
   constructor(private http: HttpClient) {}
 
@@ -94,4 +94,10 @@ validarQR(qrToken: string) {
   return this.http.post(this.api + '/validar-qr', { qrToken });
 }
 
+// -------------------
+// ENTRADA MANUAL
+// -------------------
+registerManualEntry(placa: string): Observable<any> {
+  return this.http.post(this.api + '/entrada-manual', { placa });
+}
 }

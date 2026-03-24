@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
 import { ApiService } from '../services/estacionamiento';
+import { LogoutButtonComponent } from '../logout-button/logout-button.component';
+
+
 import QRCode from 'qrcode';
 
 @Component({
@@ -10,7 +13,7 @@ import QRCode from 'qrcode';
   templateUrl: './pago-final.page.html',
   styleUrls: ['./pago-final.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule]
+  imports: [CommonModule, FormsModule, IonicModule, LogoutButtonComponent]
 })
 export class PagoFinalPage implements OnInit {
 

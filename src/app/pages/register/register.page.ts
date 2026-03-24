@@ -82,7 +82,7 @@ export class RegisterPage {
 
       const alert = await this.alertController.create({
         header:'Error',
-        message:'No se pudo conectar con el servidor',
+        message:'El correo ya existe',
         buttons:['OK']
       });
 

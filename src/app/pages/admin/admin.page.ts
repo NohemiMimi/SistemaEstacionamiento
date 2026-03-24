@@ -1,18 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, AlertController } from '@ionic/angular';
-import { HttpClientModule } from '@angular/common/http';
 import { ApiService, DashboardStats, Vehicle, Alert } from '../services/estacionamiento';
-import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
+import { addIcons } from 'ionicons';
+import { notificationsOutline, personCircleOutline } from 'ionicons/icons';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-admin',
   templateUrl: './admin.page.html',
   styleUrls: ['./admin.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, HttpClientModule, FormsModule]
+  imports: [CommonModule, FormsModule, IonicModule]
 })
 export class AdminPage implements OnInit {
 
@@ -24,44 +23,20 @@ export class AdminPage implements OnInit {
   };
 
   vehicles: Vehicle[] = [];
-  visibleVehicles: Vehicle[] = [];
   alerts: Alert[] = [];
-
-  itemsPerLoad = 5;
   peakHour = '--:--';
 
   scannedVehicle: any = null;
 
-  showExitModal = false;
-  exitTime = '12:30 PM';
-  totalTime = '2 hrs 30 min';
-  totalAmount = 50;
-  paymentMethod = '';
-
   constructor(
     private alertCtrl: AlertController,
-    private parkingService: ApiService,
-    private router: Router
-  ) {}
+    private parkingService: ApiService
+  ) {
+    addIcons({ notificationsOutline, personCircleOutline });
+  }
 
   ngOnInit() {
     this.loadRealData();
-  }
-
-  get kpis() {
-    return [
-      {
-        title: 'Estacionamientos Totales',
-        value: this.stats.totalSpaces,
-        color: 'color1',
-        button: 'Editar Lugares',
-        action: () => this.editTotalSpaces()
-      },
-      { title: 'Lugares Ocupados', value: this.stats.occupiedSpaces, color: 'color2' },
-      { title: 'Lugares Disponibles', value: this.stats.availableSpaces, color: 'color3' },
-      { title: 'Ingresos del Día', value: `$${this.stats.dailyIncome}`, color: 'color4' },
-      { title: 'Hora con más ingresos', value: this.peakHour, color: 'color5' }
-    ];
   }
 
   loadRealData() {
@@ -69,18 +44,45 @@ export class AdminPage implements OnInit {
     this.parkingService.getAlerts().subscribe(d => this.alerts = d);
     this.parkingService.getVehicles().subscribe(d => {
       this.vehicles = d;
-      this.visibleVehicles = d.slice(0, this.itemsPerLoad);
     });
   }
 
-  onIonInfinite(ev: any) {
-    const next = this.vehicles.slice(
-      this.visibleVehicles.length,
-      this.visibleVehicles.length + this.itemsPerLoad
-    );
-    this.visibleVehicles = [...this.visibleVehicles, ...next];
-    ev.target.complete();
-    if (this.visibleVehicles.length >= this.vehicles.length) ev.target.disabled = true;
+  // 🚗 REGISTRO MANUAL
+  async registerManualEntry() {
+    const alert = await this.alertCtrl.create({
+      header: 'Registrar Entrada Manual',
+      inputs: [
+        {
+          name: 'placa',
+          type: 'text',
+          placeholder: 'Ej: ABC-123'
+        }
+      ],
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Registrar',
+          handler: (data) => {
+            if (!data.placa) return;
+
+            this.parkingService.registerManualEntry(data.placa)
+              .subscribe(async (res) => {
+                if (res.success) {
+                  const ok = await this.alertCtrl.create({
+                    header: 'Éxito',
+                    message: 'Entrada registrada correctamente',
+                    buttons: ['OK']
+                  });
+                  await ok.present();
+                  this.loadRealData();
+                }
+              });
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   async openAddVehicleModal() {
@@ -108,18 +110,21 @@ export class AdminPage implements OnInit {
     if (!vehicle.id) return;
 
     const now = new Date();
-    const hours = Math.ceil((now.getTime() - new Date(vehicle.entryTime).getTime()) / 3600000);
+    const hours = Math.ceil(
+      (now.getTime() - new Date(vehicle.entryTime).getTime()) / 3600000
+    );
     const total = hours * 15;
 
     const modal = await this.alertCtrl.create({
       header: 'Cobro',
-      message: `Tiempo: ${hours}h\nTotal: $${total}`,
+      message: `Tiempo: ${hours}h - Total: $${total}`,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Cobrar',
           handler: () => {
             const exitTime = now.toISOString().slice(0, 19).replace('T', ' ');
+
             this.parkingService.chargeVehicle(vehicle.id!, {
               exitTime,
               price: total,
@@ -136,7 +141,9 @@ export class AdminPage implements OnInit {
   async editTotalSpaces() {
     const modal = await this.alertCtrl.create({
       header: 'Editar espacios',
-      inputs: [{ name: 'spaces', type: 'number', value: this.stats.totalSpaces }],
+      inputs: [
+        { name: 'spaces', type: 'number', value: this.stats.totalSpaces }
+      ],
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
@@ -147,85 +154,87 @@ export class AdminPage implements OnInit {
         }
       ]
     });
+
     await modal.present();
   }
 
-  abrirSalidaModal() {
-    this.showExitModal = true;
-  }
-
-  async logout() {
-    const alert = await this.alertCtrl.create({
-      header: 'Cerrar sesión',
-      message: '¿Seguro?',
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Salir',
-          handler: () => {
-            localStorage.clear();
-            this.router.navigate(['/login']);
-          }
-        }
-      ]
-    });
-    await alert.present();
-  }
-
   async scanQR() {
-  try {
+    try {
+      const { BarcodeScanner } = await import('@capacitor-mlkit/barcode-scanning');
 
-    const permission = await BarcodeScanner.requestPermissions();
+      const permission = await BarcodeScanner.requestPermissions();
 
-    if (permission.camera !== 'granted') {
-      alert('Sin permiso de cámara');
-      return;
-    }
-
-    const result = await BarcodeScanner.scan();
-
-    // 🔴 DETENER ESCÁNER (CLAVE)
-    await BarcodeScanner.stopScan();
-
-    if (result.barcodes.length === 0) {
-      alert('No se detectó QR');
-      return;
-    }
-
-    const qrToken = result.barcodes[0].rawValue;
-
-    if (!qrToken) {
-      alert('QR inválido');
-      return;
-    }
-
-    this.parkingService.validarQR(qrToken).subscribe((res: any) => {
-
-      if (res.success) {
-
-        const data = res.data;
-
-        this.scannedVehicle = {
-          id: data.id,
-          plate: data.placa,
-          entryTime: data.horaEntrada,
-          status: data.estado === 'dentro' ? 'Dentro' : 'Salida'
-        };
-
-      } else {
-        alert('QR no válido');
+      if (permission.camera !== 'granted') {
+        const alerta = await this.alertCtrl.create({
+          header: 'Error',
+          message: 'Sin permiso de cámara',
+          buttons: ['OK']
+        });
+        await alerta.present();
+        return;
       }
 
-    });
+      const result = await BarcodeScanner.scan();
+      await BarcodeScanner.stopScan();
 
-  } catch (e) {
-    console.error(e);
+      if (result.barcodes.length === 0) {
+        const alerta = await this.alertCtrl.create({
+          header: 'Aviso',
+          message: 'No se detectó QR',
+          buttons: ['OK']
+        });
+        await alerta.present();
+        return;
+      }
 
-    // 🔴 TAMBIÉN DETENER EN ERROR
-    await BarcodeScanner.stopScan();
+      const qrToken = result.barcodes[0].rawValue;
 
-    alert('Error al escanear');
+      // 🔥 VALIDACIÓN CORRECTA (SOLUCIÓN 1)
+      if (!qrToken) {
+        const alerta = await this.alertCtrl.create({
+          header: 'Error',
+          message: 'QR inválido',
+          buttons: ['OK']
+        });
+        await alerta.present();
+        return;
+      }
+
+      // 👇 aquí ya es string seguro
+      this.parkingService.validarQR(qrToken).subscribe(async (res: any) => {
+        if (res.success) {
+          const data = res.data;
+
+          this.scannedVehicle = {
+            id: data.id,
+            plate: data.placa,
+            entryTime: data.horaEntrada,
+            status: data.estado === 'dentro' ? 'Dentro' : 'Salida'
+          };
+        } else {
+          const alerta = await this.alertCtrl.create({
+            header: 'Error',
+            message: 'QR no válido',
+            buttons: ['OK']
+          });
+          await alerta.present();
+        }
+      });
+
+    } catch (e) {
+      console.error('Error al escanear:', e);
+
+      const alerta = await this.alertCtrl.create({
+        header: 'Error',
+        message: 'Error al escanear QR',
+        buttons: ['OK']
+      });
+      await alerta.present();
+    }
   }
-}
-  
+
+  logout() {
+    localStorage.clear();
+    window.location.href = '/login';
+  }
 }
