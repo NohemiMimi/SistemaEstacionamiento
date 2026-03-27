@@ -5,8 +5,6 @@ import QRCode from 'qrcode';
 import { ApiService } from '../services/estacionamiento';
 import { LogoutButtonComponent } from '../logout-button/logout-button.component';
 
-
-
 @Component({
   selector: 'app-pago',
   templateUrl: './pago.page.html',
@@ -28,13 +26,16 @@ export class PagoPage implements OnInit {
     this.obtenerQR();
   }
 
-  // 🔥 obtiene el QR desde backend
+  // 🔥 Obtener QR desde backend
   obtenerQR() {
     this.api.crearQR().subscribe({
       next: (res: any) => {
         if (res.success) {
           this.qrToken = res.qrToken;
+
+          // guardar para usarlo después en salida
           localStorage.setItem('qrToken', this.qrToken);
+
           this.generarQR();
         }
       },
@@ -44,7 +45,7 @@ export class PagoPage implements OnInit {
     });
   }
 
-  // 🔹 genera la imagen del QR
+  // 🔹 Generar imagen QR
   generarQR() {
     QRCode.toDataURL(this.qrToken)
       .then((url: string) => {
@@ -55,6 +56,7 @@ export class PagoPage implements OnInit {
       });
   }
 
+  // 🔹 Ir a pagar
   irAPagoFinal() {
     this.navCtrl.navigateForward('/pago-final');
   }

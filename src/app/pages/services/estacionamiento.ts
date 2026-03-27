@@ -15,8 +15,9 @@ export interface Vehicle {
   type: string;
   entryTime: Date;
   exitTime?: string;
+  date: string;
   price?: number;
-  status: 'Dentro' | 'Salida';
+  status: 'Entrada' | 'Salida';
 }
 
 export interface Alert {
@@ -99,5 +100,17 @@ validarQR(qrToken: string) {
 // -------------------
 registerManualEntry(placa: string): Observable<any> {
   return this.http.post(this.api + '/entrada-manual', { placa });
+}
+
+aceptarQR(qrToken: string) {
+  return this.http.post(this.api + '/aceptar-qr', { qrToken });
+}
+
+previewPago(qrToken: string) {
+  return this.http.post(this.api + '/preview-pago', { qrToken });
+}
+
+confirmarPago(qrToken: string, metodo: string) {
+  return this.http.post(this.api + '/confirmar-pago', { qrToken, metodo });
 }
 }

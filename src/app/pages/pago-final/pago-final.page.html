@@ -5,28 +5,39 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 <ion-content class="home-bg">
   <div class="home-wrapper">
     <div class="white-card">
-      
+
       <div class="code-badge">E</div>
 
+      <!-- QR -->
       <div class="qr-container">
         <img [src]="qrImage" *ngIf="qrImage" />
         <div class="scan-me">SCAN ME</div>
       </div>
 
+      <!-- INFO -->
       <div class="text-content">
-        <p>Total a pagar</p>
-        <h2 class="price-tag">
-  ${{ precio }}
-</h2>
 
-<p *ngIf="tiempo">
-  Tiempo: {{ tiempo.toFixed(2) }} minutos
-</p>
+        <p>Total a pagar</p>
+
+        <h2 class="price-tag">
+          ${{ precio }}
+        </h2>
+
+        <p *ngIf="tiempo">
+          Tiempo: {{ tiempo.toFixed(2) }} minutos
+        </p>
+
+        <!-- 🔥 NUEVO TEXTO UX -->
+        <p style="margin-top:10px; font-size:14px; color:#888;">
+          Dirígete a la salida y muestra este QR al administrador 🚗
+        </p>
+
       </div>
-      
+
     </div>
   </div>
 </ion-content>

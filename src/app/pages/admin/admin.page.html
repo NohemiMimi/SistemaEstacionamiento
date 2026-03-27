@@ -20,7 +20,7 @@
             <div style="text-align:center">
               <div style="font-size:14px;color:#888">Espacios Totales</div>
               <div style="font-size:28px;font-weight:bold">{{stats.totalSpaces}}</div>
-              <ion-button size="small" expand="block" (click)="editTotalSpaces()">Editar</ion-button>
+              <ion-button size="small" expand="block" >Editar</ion-button>
             </div>
           </ion-card-content>
         </ion-card>
@@ -36,6 +36,7 @@
         </ion-card>
       </ion-col>
     </ion-row>
+
     <ion-row>
       <ion-col size="6">
         <ion-card>
@@ -47,12 +48,15 @@
           </ion-card-content>
         </ion-card>
       </ion-col>
+
       <ion-col size="6">
         <ion-card>
           <ion-card-content>
             <div style="text-align:center">
               <div style="font-size:14px;color:#888">Ingresos del Día</div>
-              <div style="font-size:28px;font-weight:bold;color:#f39c12">${{stats.dailyIncome}}</div>
+              <div style="font-size:28px;font-weight:bold;color:#f39c12">
+                ${{stats.dailyIncome}}
+              </div>
             </div>
           </ion-card-content>
         </ion-card>
@@ -65,6 +69,7 @@
     <ion-card-header>
       <ion-card-title>Escáner QR</ion-card-title>
     </ion-card-header>
+
     <ion-card-content>
       <ion-button expand="block" color="primary" (click)="scanQR()">
         ESCANEAR QR
@@ -74,9 +79,18 @@
         <ion-item>
           <ion-label>
             <h2><strong>Placa:</strong> {{scannedVehicle.plate}}</h2>
-            <p><strong>Entrada:</strong> {{scannedVehicle.entryTime || '--'}}</p>
+            <p><strong>Entrada:</strong> {{scannedVehicle.entryTime}}</p>
             <p><strong>Estado:</strong> {{scannedVehicle.status}}</p>
           </ion-label>
+
+          <!-- 🔥 BOTÓN COBRAR DESDE ESCANEO -->
+          <ion-button
+  color="success"
+  (click)="handleSalida(scannedVehicle.qrToken)"
+  *ngIf="scannedVehicle.status === 'Dentro'">
+  COBRAR
+</ion-button>
+
         </ion-item>
       </div>
     </ion-card-content>
@@ -87,28 +101,49 @@
     <ion-card-header>
       <ion-card-title>Vehículos Recientes</ion-card-title>
     </ion-card-header>
+
     <ion-card-content>
+
       <ion-button expand="block" color="tertiary" (click)="registerManualEntry()">
-  REGISTRAR ENTRADA MANUAL
-</ion-button>
+        REGISTRAR ENTRADA MANUAL
+      </ion-button>
 
       <ion-list *ngIf="vehicles.length > 0">
+
         <ion-item *ngFor="let vehicle of vehicles">
+
           <ion-label>
-            <h2>{{vehicle.plate}}</h2>
+            <h2>
+              {{ vehicle.plate === 'N/A' ? '🚗 Usuario App (QR)' : vehicle.plate }}
+            </h2>
+
             <p>Estado: {{vehicle.status}}</p>
+            <p>Entrada: {{vehicle.entryTime}}</p>
+            <p *ngIf="vehicle.exitTime">Salida: {{vehicle.exitTime}}</p>
+
+            <!-- 💰 PRECIO -->
+            <p>💵 ${{vehicle.price || 0}}</p>
           </ion-label>
-          <ion-button slot="end" size="small" color="warning"
+
+          <!-- 🔥 BOTÓN COBRAR -->
+          <ion-button
+            slot="end"
+            size="small"
+            color="warning"
             *ngIf="vehicle.status === 'Dentro'"
             (click)="openChargeModal(vehicle)">
             Cobrar
           </ion-button>
+
         </ion-item>
+
       </ion-list>
 
-      <p *ngIf="vehicles.length === 0" style="text-align:center;color:#888;padding:20px">
+      <p *ngIf="vehicles.length === 0"
+         style="text-align:center;color:#888;padding:20px">
         No hay vehículos registrados
       </p>
+
     </ion-card-content>
   </ion-card>
 

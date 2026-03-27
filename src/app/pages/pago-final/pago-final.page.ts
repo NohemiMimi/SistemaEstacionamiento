@@ -53,26 +53,26 @@ export class PagoFinalPage implements OnInit {
 
   // 💰 calcular pago desde backend
   calcularPago() {
-    this.cargando = true;
+  this.cargando = true;
 
-    this.api.salidaQR(this.qrToken).subscribe({
-      next: (res: any) => {
-        this.cargando = false;
+  this.api.previewPago(this.qrToken).subscribe({
+    next: (res: any) => {
+      this.cargando = false;
 
-        if (res.success) {
-          this.precio = res.precio;
-          this.tiempo = res.tiempo;
-          
-        } else {
-          console.error('No se pudo calcular el pago');
-        }
-      },
-      error: (err) => {
-        this.cargando = false;
-        console.error('Error al calcular pago:', err);
+      if (res.success) {
+        this.precio = res.data.precio;
+        // opcional si luego quieres tiempo:
+        // this.tiempo = res.data.tiempo;
+      } else {
+        console.error('No se pudo calcular el pago');
       }
-    });
-  }
+    },
+    error: (err) => {
+      this.cargando = false;
+      console.error('Error al calcular pago:', err);
+    }
+  });
+}
 
   // 🔙 regresar
   regresar() {
