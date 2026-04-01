@@ -17,7 +17,7 @@ export interface Vehicle {
   exitTime?: string;
   date: string;
   price?: number;
-  status: 'Entrada' | 'Salida';
+  status: 'Dentro' | 'Salida' | 'Pendiente';
 }
 
 export interface Alert {

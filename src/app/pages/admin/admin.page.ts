@@ -1,6 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, AlertController } from '@ionic/angular';
+import {
+  IonContent,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
+  IonList,
+  IonItem,
+  IonLabel,
+  AlertController
+} from '@ionic/angular/standalone';
 import { ApiService, DashboardStats, Alert } from '../services/estacionamiento';
 import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
@@ -11,7 +29,27 @@ import { notificationsOutline, personCircleOutline } from 'ionicons/icons';
   templateUrl: './admin.page.html',
   styleUrls: ['./admin.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule]
+  imports: [
+  CommonModule,
+  FormsModule,
+
+  IonContent,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
+  IonList,
+  IonItem,
+  IonLabel
+]
 })
 export class AdminPage implements OnInit {
 
@@ -24,8 +62,6 @@ export class AdminPage implements OnInit {
 
   vehicles: any[] = [];
   alerts: Alert[] = [];
-
-  scannedVehicle: any = null;
 
   parkingFullAlertShown = false;
 
@@ -131,19 +167,37 @@ export class AdminPage implements OnInit {
         return;
       }
 
-      // 🔥 VALIDAR QR
       this.parkingService.validarQR(qrToken).subscribe(async (res: any) => {
 
-        // 👉 SI ES ENTRADA
-        if (res.success && res.data.estado === 'pendiente') {
-          this.handleEntrada(qrToken, res.data);
-        } 
-        // 👉 SI ES SALIDA
-        else {
-          this.handleSalida(qrToken);
-        }
+  if (!res.success) {
+    const alerta = await this.alertCtrl.create({
+      header: 'Error',
+      message: 'QR no válido',
+      buttons: ['OK']
+    });
+    await alerta.present();
+    return;
+  }
 
-      });
+  const data = res.data;
+
+  // 🔥 SOLO DECIDES QUÉ HACER
+  if (data.estado === 'pendiente') {
+    this.handleEntrada(qrToken, data);
+  } 
+  else if (data.estado === 'dentro') {
+    this.handleSalida(qrToken);
+  } 
+  else {
+    const alerta = await this.alertCtrl.create({
+      header: 'Aviso',
+      message: 'Este vehículo ya salió 🚗',
+      buttons: ['OK']
+    });
+    await alerta.present();
+  }
+
+});
 
     } catch (e) {
       console.error(e);

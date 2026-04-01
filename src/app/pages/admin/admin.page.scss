@@ -1,290 +1,143 @@
 /* ========================= */
-/* Fondo general */
+/* FONDO (igual que HOME) */
 /* ========================= */
 
-.custom-background{
-
-  --background: linear-gradient(
-    180deg,
-    #B9E85D 0%,
-    #6ED487 35%,
-    #5CB88B 70%,
-    #22A98A 100%
-  );
-
+.admin-bg {
+  --background: #2CAD89;
 }
 
 
 /* ========================= */
-/* KPI cards */
+/* HEADER */
 /* ========================= */
 
-.kpi-card{
-
-  border-radius: 18px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-  transition: transform 0.2s;
-
+ion-toolbar {
+  --background: transparent;
+  --color: white;
 }
 
-.kpi-card:hover{
 
-  transform: translateY(-5px);
+/* ========================= */
+/* CARDS (tipo white-card) */
+/* ========================= */
 
+ion-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
-.kpi-title{
 
-  font-size: 14px;
-  font-weight: 600;
-  opacity: .9;
+/* ========================= */
+/* KPI */
+/* ========================= */
 
+.kpi-title {
+  font-size: 13px;
+  color: #777;
 }
 
-.kpi-value{
-
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 28px;
+.kpi-value {
+  font-size: 26px;
   font-weight: bold;
-  margin-top: 10px;
-
-}
-
-.kpi-value ion-icon{
-
-  font-size: 28px;
-
+  margin-top: 5px;
 }
 
 
 /* ========================= */
-/* Paneles */
+/* BOTONES */
 /* ========================= */
 
-.panel-card{
+ion-button {
+  --border-radius: 12px;
+  font-weight: bold;
+}
 
-  border-radius: 18px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+/* Botón principal (QR) */
+ion-button[color="primary"] {
+  --background: #2CAD89;
+}
 
+/* Botón manual */
+ion-button[color="tertiary"] {
+  --background: #27ae60;
+}
+
+/* Botón cobrar */
+ion-button[color="warning"] {
+  --background: #f39c12;
 }
 
 
 /* ========================= */
-/* Headers de panel */
+/* LISTA VEHÍCULOS */
 /* ========================= */
 
-ion-card-header{
-
-  background: linear-gradient(
-    90deg,
-    #5CB88B,
-    #22A98A
-  );
-
-  color: white;
-
+ion-item {
+  border-radius: 12px;
+  margin-bottom: 8px;
+  --background: #f9f9f9;
 }
 
 
 /* ========================= */
-/* Video */
+/* TEXTO */
 /* ========================= */
 
-.video-placeholder{
+ion-label h2 {
+  font-weight: bold;
+  color: #2c3e50;
+}
 
-  height: 200px;
+ion-label p {
+  font-size: 13px;
+  color: #555;
+}
 
+/* ========================= */
+/* GRID RESPONSIVO KPI */
+/* ========================= */
+
+ion-row {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+/* ========================= */
+/* KPI CARDS IGUALES */
+/* ========================= */
+
+.kpi-card {
+  height: 100%;
+  min-height: 120px; /* 🔥 altura uniforme */
+  display: flex;
   align-items: center;
   justify-content: center;
-
-  border-radius: 12px;
-
-  background: rgba(255,255,255,0.3);
-
-  backdrop-filter: blur(5px);
-
 }
 
-.video-placeholder ion-icon{
-
-  font-size: 50px;
-  color: #22A98A;
-
-}
-
-.video-placeholder p{
-
-  margin-top: 10px;
-  font-weight: 600;
-
-}
-
-
-/* ========================= */
-/* Lista de Vehículos */
-/* ========================= */
-
-ion-item{
-
-  border-radius: 10px;
-  margin-bottom: 5px;
-
-}
-
-
-/* ========================= */
-/* Botón agregar vehículo */
-/* ========================= */
-
-ion-button{
-
-  --border-radius: 12px;
-  margin: 10px;
-
-}
-
-
-/* ========================= */
-/* Notificaciones */
-/* ========================= */
-
-ion-note{
-
-  font-weight: bold;
-
-}
-
-
-/* ========================= */
-/* Scroll general */
-/* ========================= */
-
-ion-content{
-
-  --padding-bottom: 30px;
-
-}
-
-
-/* ========================= */
-/* Scroll de Vehículos */
-/* ========================= */
-
-.vehicle-scroll{
-
-  height: 420px;
-  overflow-y: auto;
-  padding: 10px;
-
-}
-
-
-/* ========================= */
-/* Tabla de Vehículos */
-/* ========================= */
-
-.vehicle-table{
-
+/* contenido centrado */
+.kpi-card ion-card-content {
   width: 100%;
-  font-size: 15px;
-
 }
-
-
-/* Header tabla */
-
-.table-header{
-
-  font-weight: 700;
-
-  background: linear-gradient(
-    90deg,
-    #5CB88B,
-    #22A98A
-  );
-
-  color: white;
-
-  padding: 10px;
-
-  border-radius: 10px;
-
-}
-
-
-/* Filas */
-
-.table-row{
-
-  padding: 12px;
-
-  border-bottom: 1px solid rgba(0,0,0,0.1);
-
-  align-items: center;
-
-}
-
-
-/* Hover filas */
-
-.table-row:hover{
-
-  background: rgba(255,255,255,0.4);
-
-  border-radius: 8px;
-
-}
-
-
-/* Efecto zebra tipo sistema */
-
-.table-row:nth-child(even){
-
-  background: rgba(255,255,255,0.2);
-
-}
-
 
 /* ========================= */
-/* Badges estado */
+/* RESPONSIVE */
 /* ========================= */
 
-ion-badge{
+/* En pantallas pequeñas (celular) */
+@media (max-width: 480px) {
+  ion-col {
+    size: 12 !important; /* 1 por fila */
+  }
 
-  font-size: 12px;
-  padding: 6px 8px;
-  border-radius: 8px;
-
+  .kpi-card {
+    min-height: 110px;
+  }
 }
 
-
-/* ========================= */
-/* Botones dentro de tabla */
-/* ========================= */
-
-.table-row ion-button{
-
-  --border-radius: 10px;
-
-  height: 32px;
-
-  font-size: 12px;
-
-}
-
-.qr-result {
-  margin-top: 15px;
-  font-size: 14px;
-}
-
-.qr-result p {
-  margin: 5px 0;
-}
-
-.qr-result ion-button {
-  margin-top: 8px;
+/* En tablet */
+@media (min-width: 481px) and (max-width: 768px) {
+  ion-col {
+    size: 6 !important; /* 2 por fila */
+  }
 }
