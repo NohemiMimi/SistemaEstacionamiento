@@ -15,7 +15,7 @@ import { logOutOutline } from 'ionicons/icons';
   imports: [CommonModule, IonButton, IonIcon],
   styles: [`
   .logout-btn {
-    --color: white; /* 🔥 icono blanco */
+    --color: white;
   }
 `],
   template: `

@@ -29,14 +29,11 @@ export interface Alert {
 })
 export class ApiService {
 
-  // Cambia esta URL si tu backend usa otro puerto
   api = 'https://web-production-ea749.up.railway.app';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  // -------------------
   // USUARIOS
-  // -------------------
 
   registrar(datos: any) {
     return this.http.post(this.api + '/usuarios', datos);
@@ -46,9 +43,7 @@ export class ApiService {
     return this.http.post(this.api + '/login', datos);
   }
 
-  // -------------------
   // DASHBOARD
-  // -------------------
 
   getStats(): Observable<DashboardStats> {
     return this.http.get<DashboardStats>(this.api + '/stats');
@@ -58,9 +53,7 @@ export class ApiService {
     return this.http.put(this.api + '/stats/spaces', { totalSpaces: spaces });
   }
 
-  // -------------------
   // VEHICULOS
-  // -------------------
 
   getVehicles(): Observable<Vehicle[]> {
     return this.http.get<Vehicle[]>(this.api + '/vehicles');
@@ -74,9 +67,8 @@ export class ApiService {
     return this.http.put(this.api + '/vehicles/' + vehicleId + '/charge', chargeData);
   }
 
-  // -------------------
+
   // ALERTAS
-  // -------------------
 
   getAlerts(): Observable<Alert[]> {
     return this.http.get<Alert[]>(this.api + '/alerts');
@@ -84,33 +76,36 @@ export class ApiService {
 
   //generar QR
   crearQR(): Observable<any> {
-  return this.http.post(this.api + '/crear-qr', {});
-}
-//salida QR
-salidaQR(qrToken: string): Observable<any> {
-  return this.http.post(this.api + '/salida', { qrToken });
-}
+    return this.http.post(this.api + '/crear-qr', {});
+  }
+  //salida QR
+  salidaQR(qrToken: string): Observable<any> {
+    return this.http.post(this.api + '/salida', { qrToken });
+  }
 
-validarQR(qrToken: string) {
-  return this.http.post(this.api + '/validar-qr', { qrToken });
-}
+  validarQR(qrToken: string) {
+    return this.http.post(this.api + '/validar-qr', { qrToken });
+  }
 
-// -------------------
-// ENTRADA MANUAL
-// -------------------
-registerManualEntry(placa: string): Observable<any> {
-  return this.http.post(this.api + '/entrada-manual', { placa });
-}
+  // ENTRADA MANUAL
 
-aceptarQR(qrToken: string) {
-  return this.http.post(this.api + '/aceptar-qr', { qrToken });
-}
+  registerManualEntry(placa: string): Observable<any> {
+    return this.http.post(this.api + '/entrada-manual', { placa });
+  }
 
-previewPago(qrToken: string) {
-  return this.http.post(this.api + '/preview-pago', { qrToken });
-}
+  aceptarQR(qrToken: string) {
+    return this.http.post(this.api + '/aceptar-qr', { qrToken });
+  }
 
-confirmarPago(qrToken: string, metodo: string) {
-  return this.http.post(this.api + '/confirmar-pago', { qrToken, metodo });
-}
+  previewPago(qrToken: string) {
+    return this.http.post(this.api + '/preview-pago', { qrToken });
+  }
+
+  confirmarPago(qrToken: string, metodo: string) {
+    return this.http.post(this.api + '/confirmar-pago', { qrToken, metodo });
+  }
+
+  checkDisponibilidad(): Observable<any> {
+    return this.http.post(this.api + '/contador-entrada', {});
+  }
 }

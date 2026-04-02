@@ -1,4 +1,4 @@
-/* Fondo de la pantalla (idéntico al Home) */
+
 .home-bg {
   --background: #2CAD89;
   display: flex;
@@ -6,7 +6,7 @@
   justify-content: center;
 }
 
-/* Centrado del contenido */
+
 .home-wrapper {
   display: flex;
   justify-content: center;
@@ -15,7 +15,6 @@
   width: 100%;
 }
 
-/* Estructura de la tarjeta */
 .white-card {
   background: white;
   width: 85%;
@@ -26,7 +25,6 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilo del círculo con la letra E */
 .code-badge {
   width: 90px;
   height: 90px;
@@ -35,13 +33,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 auto 30px auto; /* Centrado y margen inferior */
+  margin: 0 auto 30px auto; 
   font-size: 45px;
   font-weight: bold;
   color: #2CAD89;
 }
 
-/* Estilo del texto */
 .text-content {
   font-size: 1.1rem;
   color: #333;
@@ -55,7 +52,6 @@
   }
 }
 
-/* Botón de pago */
 .main-btn {
   --background: #2CAD89;
   --border-radius: 10px;
@@ -77,10 +73,9 @@
 }
 
 ion-content {
-  --background: #2cb08a; // Usa el código exacto de tu verde
+  --background: #2cb08a; 
 }
 
-// Quitamos cualquier línea sobrante del header
 ion-header {
   position: absolute;
   top: 0;

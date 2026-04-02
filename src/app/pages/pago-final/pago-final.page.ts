@@ -29,18 +29,18 @@ export class PagoFinalPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    // 🔥 obtener token guardado
+    // se obtiene token guardado
     this.qrToken = localStorage.getItem('qrToken') || '';
 
     if (this.qrToken) {
-      this.generarQR();   // 🔳 generar QR otra vez
-      this.calcularPago(); // 💰 calcular pago
+      this.generarQR();   // genera QR otra vez
+      this.calcularPago(); //calcula pago
     } else {
       console.warn('No hay QR token');
     }
   }
 
-  // 🔳 generar imagen del QR
+  // genera imagen del QR
   generarQR() {
     QRCode.toDataURL(this.qrToken)
       .then((url: string) => {
@@ -51,7 +51,7 @@ export class PagoFinalPage implements OnInit {
       });
   }
 
-  // 💰 calcular pago desde backend
+  // calcula pago desde backend
   calcularPago() {
   this.cargando = true;
 
@@ -74,7 +74,7 @@ export class PagoFinalPage implements OnInit {
   });
 }
 
-  // 🔙 regresar
+
   regresar() {
     this.navCtrl.back();
   }

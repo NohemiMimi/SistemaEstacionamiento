@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AlertController } from '@ionic/angular';
 import {
   IonHeader,
   IonToolbar,
@@ -21,7 +22,6 @@ import { LogoutButtonComponent } from '../logout-button/logout-button.component'
     CommonModule,
     FormsModule,
     LogoutButtonComponent,
-
     IonHeader,
     IonToolbar,
     IonButtons,
@@ -40,7 +40,8 @@ export class HomePage implements OnInit {
 
   constructor(
     private navCtrl: NavController,
-    private parkingService: ApiService
+    private parkingService: ApiService,
+    private alertCtrl: AlertController 
   ) {}
 
   ngOnInit() {
@@ -57,7 +58,27 @@ export class HomePage implements OnInit {
     });
   }
 
-  irAEntrada() {
-    this.navCtrl.navigateForward('/pago');
-  }
+  async irAEntrada() {
+
+  this.parkingService.checkDisponibilidad().subscribe({
+
+    next: (res: any) => {
+      this.navCtrl.navigateForward('/pago');
+    },
+    
+    error: async (err) => {
+
+      const alert = await this.alertCtrl.create({
+        header: '🚫 Estacionamiento lleno',
+        message: 'Ya no hay espacios disponibles',
+        buttons: ['OK']
+      });
+
+      await alert.present();
+    }
+
+  });
+
+}
+
 }

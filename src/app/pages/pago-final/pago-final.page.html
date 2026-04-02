@@ -14,7 +14,7 @@
 
       <!-- QR -->
       <div class="qr-container">
-        <img [src]="qrImage" *ngIf="qrImage" />
+        <img [src]="qrImage" [hidden]="!qrImage" />
         <div class="scan-me">SCAN ME</div>
       </div>
 
@@ -27,11 +27,10 @@
           ${{ precio }}
         </h2>
 
-        <p *ngIf="tiempo">
+        <p [hidden]="!tiempo">
           Tiempo: {{ tiempo.toFixed(2) }} minutos
         </p>
 
-        <!-- 🔥 NUEVO TEXTO UX -->
         <p style="margin-top:10px; font-size:14px; color:#888;">
           Dirígete a la salida y muestra este QR al administrador 🚗
         </p>

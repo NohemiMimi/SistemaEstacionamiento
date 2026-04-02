@@ -30,26 +30,26 @@ import { notificationsOutline, personCircleOutline } from 'ionicons/icons';
   styleUrls: ['./admin.page.scss'],
   standalone: true,
   imports: [
-  CommonModule,
-  FormsModule,
+    CommonModule,
+    FormsModule,
 
-  IonContent,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-  IonList,
-  IonItem,
-  IonLabel
-]
+    IonContent,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardTitle,
+    IonList,
+    IonItem,
+    IonLabel
+  ]
 })
 export class AdminPage implements OnInit {
 
@@ -78,11 +78,15 @@ export class AdminPage implements OnInit {
     setInterval(() => {
       this.loadRealData();
     }, 3000);
+
+    window.addEventListener('cobrarVehiculo', (event: any) => {
+      this.openChargeModal(event.detail);
+    });
   }
 
-  // =========================
+
   // CARGAR DATOS
-  // =========================
+
   loadRealData() {
 
     this.parkingService.getStats().subscribe(async d => {
@@ -114,9 +118,9 @@ export class AdminPage implements OnInit {
     });
   }
 
-  // =========================
+
   // REGISTRO MANUAL
-  // =========================
+
   async registerManualEntry() {
     const alert = await this.alertCtrl.create({
       header: 'Registrar Entrada Manual',
@@ -140,9 +144,9 @@ export class AdminPage implements OnInit {
     await alert.present();
   }
 
-  // =========================
+
   // ESCANEAR QR
-  // =========================
+
   async scanQR() {
     try {
       const { BarcodeScanner } = await import('@capacitor-mlkit/barcode-scanning');
@@ -169,50 +173,49 @@ export class AdminPage implements OnInit {
 
       this.parkingService.validarQR(qrToken).subscribe(async (res: any) => {
 
-  if (!res.success) {
-    const alerta = await this.alertCtrl.create({
-      header: 'Error',
-      message: 'QR no válido',
-      buttons: ['OK']
-    });
-    await alerta.present();
-    return;
-  }
+        if (!res.success) {
+          const alerta = await this.alertCtrl.create({
+            header: 'Error',
+            message: 'QR no válido',
+            buttons: ['OK']
+          });
+          await alerta.present();
+          return;
+        }
 
-  const data = res.data;
+        const data = res.data;
 
-  // 🔥 SOLO DECIDES QUÉ HACER
-  if (data.estado === 'pendiente') {
-    this.handleEntrada(qrToken, data);
-  } 
-  else if (data.estado === 'dentro') {
-    this.handleSalida(qrToken);
-  } 
-  else {
-    const alerta = await this.alertCtrl.create({
-      header: 'Aviso',
-      message: 'Este vehículo ya salió 🚗',
-      buttons: ['OK']
-    });
-    await alerta.present();
-  }
+        if (data.estado === 'pendiente') {
+          this.handleEntrada(qrToken, data);
+        }
+        else if (data.estado === 'dentro') {
+          this.handleSalida(qrToken);
+        }
+        else {
+          const alerta = await this.alertCtrl.create({
+            header: 'Aviso',
+            message: 'Este vehículo ya salió 🚗',
+            buttons: ['OK']
+          });
+          await alerta.present();
+        }
 
-});
+      });
 
     } catch (e) {
       console.error(e);
     }
   }
 
-  // =========================
+ 
   // ENTRADA
-  // =========================
+ 
   async handleEntrada(qrToken: string, data: any) {
 
     const confirm = await this.alertCtrl.create({
       header: 'Validar acceso',
       message: `
-        🚗 Placa: ${data.placa} <br>
+        🚗 Placa: ${data.placa}, 
         Estado: ${data.estado}
       `,
       buttons: [
@@ -248,9 +251,9 @@ export class AdminPage implements OnInit {
     await confirm.present();
   }
 
-  // =========================
+ 
   // SALIDA (QR CON MÉTODO DE PAGO)
-  // =========================
+ 
   async handleSalida(qrToken: string) {
 
     this.parkingService.previewPago(qrToken).subscribe(async (res: any) => {
@@ -322,18 +325,16 @@ export class AdminPage implements OnInit {
     });
   }
 
-  // =========================
+  
   // COBRO DESDE LISTA
-  // =========================
+  
   async openChargeModal(vehicle: any) {
 
-    // 🔥 SI TIENE QR → flujo nuevo
     if (vehicle.qrToken) {
       this.handleSalida(vehicle.qrToken);
       return;
     }
 
-    // 🔥 SI ES MANUAL → flujo viejo
     const modal = await this.alertCtrl.create({
       header: 'Cobrar',
       message: '¿Deseas cobrar este vehículo?',
@@ -367,9 +368,39 @@ export class AdminPage implements OnInit {
     await modal.present();
   }
 
-  // =========================
+  get vehiclesHTML(): string {
+    if (!this.vehicles || this.vehicles.length === 0) return '';
+
+    return this.vehicles.map(vehicle => `
+    <ion-item>
+      <ion-label>
+        <h2>
+          ${vehicle.plate === 'N/A' ? '🚗 Usuario App' : vehicle.plate}
+        </h2>
+
+        <p>Estado: ${vehicle.status}</p>
+        <p>Entrada: ${vehicle.entryTime}</p>
+        ${vehicle.exitTime ? `<p>Salida: ${vehicle.exitTime}</p>` : ''}
+
+        <p>💵 $${vehicle.price || 0}</p>
+      </ion-label>
+
+      ${vehicle.status === 'Dentro' ? `
+        <ion-button
+          slot="end"
+          size="small"
+          color="warning"
+          onclick="window.dispatchEvent(new CustomEvent('cobrarVehiculo', { detail: ${JSON.stringify(vehicle)} }))">
+          Cobrar
+        </ion-button>
+      ` : ''}
+    </ion-item>
+  `).join('');
+  }
+
+  
   // LOGOUT
-  // =========================
+  
   logout() {
     localStorage.clear();
     window.location.href = '/login';

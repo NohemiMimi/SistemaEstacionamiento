@@ -5,9 +5,11 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 <ion-content class="home-bg">
   <div class="home-wrapper">
     <div class="white-card">
+
       <div class="code-badge">E</div>
       
       <div class="text-content">
@@ -16,12 +18,13 @@
       </div>
 
       <div class="qr-placeholder">
-  <img [src]="qrImage" *ngIf="qrImage" />
-</div>
+        <img [src]="qrImage" [hidden]="!qrImage" />
+      </div>
 
       <ion-button expand="block" class="main-btn" (click)="irAPagoFinal()">
         PAGAR
       </ion-button>
+
     </div>
   </div>
 </ion-content>

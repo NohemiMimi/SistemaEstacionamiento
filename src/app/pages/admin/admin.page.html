@@ -9,12 +9,12 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="admin-bg ion-padding">>
+<ion-content class="admin-bg ion-padding">
 
   <!-- KPIs -->
   <ion-grid>
     <ion-row>
-      <ion-col size="">
+      <ion-col>
         <ion-card class="kpi-card">
           <ion-card-content>
             <div style="text-align:center">
@@ -24,12 +24,15 @@
           </ion-card-content>
         </ion-card>
       </ion-col>
-      <ion-col size="">
+
+      <ion-col>
         <ion-card class="kpi-card">
           <ion-card-content>
             <div style="text-align:center">
               <div style="font-size:14px;color:#888">Ocupados</div>
-              <div style="font-size:28px;font-weight:bold;color:#e74c3c">{{stats.occupiedSpaces}}</div>
+              <div style="font-size:28px;font-weight:bold;color:#e74c3c">
+                {{stats.occupiedSpaces}}
+              </div>
             </div>
           </ion-card-content>
         </ion-card>
@@ -37,18 +40,20 @@
     </ion-row>
 
     <ion-row>
-      <ion-col size="">
+      <ion-col>
         <ion-card class="kpi-card">
           <ion-card-content>
             <div style="text-align:center">
               <div style="font-size:14px;color:#888">Disponibles</div>
-              <div style="font-size:28px;font-weight:bold;color:#2ecc71">{{stats.availableSpaces}}</div>
+              <div style="font-size:28px;font-weight:bold;color:#2ecc71">
+                {{stats.availableSpaces}}
+              </div>
             </div>
           </ion-card-content>
         </ion-card>
       </ion-col>
 
-      <ion-col size="">
+      <ion-col>
         <ion-card class="kpi-card">
           <ion-card-content>
             <div style="text-align:center">
@@ -63,7 +68,7 @@
     </ion-row>
   </ion-grid>
 
-  <!-- Escáner QR -->
+  <!-- Escáner -->
   <ion-card>
     <ion-card-header>
       <ion-card-title>Escáner QR</ion-card-title>
@@ -88,39 +93,15 @@
         REGISTRAR ENTRADA MANUAL
       </ion-button>
 
-      <ion-list *ngIf="vehicles.length > 0">
-
-        <ion-item *ngFor="let vehicle of vehicles">
-
-          <ion-label>
-            <h2>
-              {{ vehicle.plate === 'N/A' ? '🚗 Usuario App' : vehicle.plate }}
-            </h2>
-
-            <p>Estado: {{vehicle.status}}</p>
-            <p>Entrada: {{vehicle.entryTime}}</p>
-            <p *ngIf="vehicle.exitTime">Salida: {{vehicle.exitTime}}</p>
-
-            <!-- 💰 PRECIO -->
-            <p>💵 ${{vehicle.price || 0}}</p>
-          </ion-label>
-
-          <!-- 🔥 BOTÓN COBRAR -->
-          <ion-button
-            slot="end"
-            size="small"
-            color="warning"
-            *ngIf="vehicle.status === 'Dentro'"
-            (click)="openChargeModal(vehicle)">
-            Cobrar
-          </ion-button>
-
-        </ion-item>
-
+      <!-- LISTA -->
+      <ion-list [hidden]="vehicles.length === 0">
+        <div [innerHTML]="vehiclesHTML"></div>
       </ion-list>
 
-      <p *ngIf="vehicles.length === 0"
-         style="text-align:center;color:#888;padding:20px">
+      <!-- MENSAJE VACÍO -->
+      <p 
+        [hidden]="vehicles.length > 0"
+        style="text-align:center;color:#888;padding:20px">
         No hay vehículos registrados
       </p>
 

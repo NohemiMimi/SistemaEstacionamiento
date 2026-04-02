@@ -50,7 +50,7 @@ export class LoginPage {
             buttons: [{
               text: 'OK',
               handler: () => {
-                // Navegación directa - funciona siempre en Capacitor
+           
                 const destino = rol === 'admin' ? '/admin' : '/home';
                 console.log('Navegando a:', destino);
                 window.location.href = destino;

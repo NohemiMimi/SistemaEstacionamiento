@@ -1,25 +1,17 @@
-/* ========================= */
 /* FONDO (igual que HOME) */
-/* ========================= */
 
 .admin-bg {
   --background: #2CAD89;
 }
 
-
-/* ========================= */
 /* HEADER */
-/* ========================= */
 
 ion-toolbar {
   --background: transparent;
   --color: white;
 }
 
-
-/* ========================= */
 /* CARDS (tipo white-card) */
-/* ========================= */
 
 ion-card {
   background: white;
@@ -27,10 +19,7 @@ ion-card {
   box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
-
-/* ========================= */
 /* KPI */
-/* ========================= */
 
 .kpi-title {
   font-size: 13px;
@@ -44,9 +33,7 @@ ion-card {
 }
 
 
-/* ========================= */
 /* BOTONES */
-/* ========================= */
 
 ion-button {
   --border-radius: 12px;
@@ -68,10 +55,7 @@ ion-button[color="warning"] {
   --background: #f39c12;
 }
 
-
-/* ========================= */
 /* LISTA VEHÍCULOS */
-/* ========================= */
 
 ion-item {
   border-radius: 12px;
@@ -79,10 +63,7 @@ ion-item {
   --background: #f9f9f9;
 }
 
-
-/* ========================= */
 /* TEXTO */
-/* ========================= */
 
 ion-label h2 {
   font-weight: bold;
@@ -94,18 +75,14 @@ ion-label p {
   color: #555;
 }
 
-/* ========================= */
 /* GRID RESPONSIVO KPI */
-/* ========================= */
 
 ion-row {
   display: flex;
   flex-wrap: wrap;
 }
 
-/* ========================= */
 /* KPI CARDS IGUALES */
-/* ========================= */
 
 .kpi-card {
   height: 100%;
@@ -120,14 +97,12 @@ ion-row {
   width: 100%;
 }
 
-/* ========================= */
-/* RESPONSIVE */
-/* ========================= */
 
-/* En pantallas pequeñas (celular) */
+/* RESPONSIVE */
+
 @media (max-width: 480px) {
   ion-col {
-    size: 12 !important; /* 1 por fila */
+    size: 12 !important; 
   }
 
   .kpi-card {
@@ -135,7 +110,6 @@ ion-row {
   }
 }
 
-/* En tablet */
 @media (min-width: 481px) and (max-width: 768px) {
   ion-col {
     size: 6 !important; /* 2 por fila */

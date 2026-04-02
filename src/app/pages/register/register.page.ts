@@ -70,7 +70,7 @@ export class RegisterPage {
 
         const alert = await this.alertController.create({
           header:'Error',
-          message: resp.mensaje, // mensaje del backend (duplicado, etc.)
+          message: resp.mensaje, 
           buttons:['OK']
         });
 
